@@ -41,11 +41,11 @@ export class SearchParams {
   private set page(value: number) {
     let _page = +value;
 
-    if (Number.isNaN(_page || _page < 0 || parseInt(`${_page}`) !== _page)) {
+    if (Number.isNaN(_page) || _page <= 0 || parseInt(`${_page}`) !== _page) {
       _page = 1;
     }
 
-    this.page = _page;
+    this._page = _page;
   }
 
   get per_page() {
@@ -53,19 +53,17 @@ export class SearchParams {
   }
 
   private set per_page(value: number) {
-    let _per_page = +value;
+    let _per_page = value === (true as any) ? this._per_page : +value;
 
     if (
-      Number.isNaN(
-        _per_page ||
-          _per_page < 0 ||
-          parseInt(_per_page.toString()) !== _per_page
-      )
+      Number.isNaN(_per_page) ||
+      _per_page <= 0 ||
+      parseInt(_per_page.toString()) !== _per_page
     ) {
       _per_page = this.per_page;
     }
 
-    this.page = _per_page;
+    this._per_page = _per_page;
   }
 
   get sort() {
@@ -83,12 +81,12 @@ export class SearchParams {
 
   private set sort_dir(value: string) {
     if (!this.sort) {
-      this.sort_dir = null;
+      this._sort_dir = null;
       return;
     }
 
     const dir = `${value}`.toLowerCase();
-    this.sort_dir = dir !== "asc" && dir !== "desc" ? "asc" : dir;
+    this._sort_dir = dir !== "asc" && dir !== "desc" ? "asc" : dir;
   }
 
   get filter() {
