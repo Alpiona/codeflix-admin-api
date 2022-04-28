@@ -38,31 +38,67 @@ export class SearchParams {
     return this._page;
   }
 
-  private set page(value: number) {}
+  private set page(value: number) {
+    let _page = +value;
+
+    if (Number.isNaN(_page || _page < 0 || parseInt(`${_page}`) !== _page)) {
+      _page = 1;
+    }
+
+    this.page = _page;
+  }
 
   get per_page() {
     return this._per_page;
   }
 
-  private set per_page(value: number) {}
+  private set per_page(value: number) {
+    let _per_page = +value;
+
+    if (
+      Number.isNaN(
+        _per_page ||
+          _per_page < 0 ||
+          parseInt(_per_page.toString()) !== _per_page
+      )
+    ) {
+      _per_page = this.per_page;
+    }
+
+    this.page = _per_page;
+  }
 
   get sort() {
     return this._sort;
   }
 
-  private set sort(value: string) {}
+  private set sort(value: string) {
+    this._sort =
+      value === null || value === undefined || value === "" ? null : `${value}`;
+  }
 
   get sort_dir() {
     return this._sort_dir;
   }
 
-  private set sort_dir(value: string) {}
+  private set sort_dir(value: string) {
+    if (!this.sort) {
+      this.sort_dir = null;
+      return;
+    }
+
+    const dir = `${value}`.toLowerCase();
+    this.sort_dir = dir !== "asc" && dir !== "desc" ? "asc" : dir;
+  }
 
   get filter() {
     return this._filter;
   }
 
-  private set filter(value: string) {}
+  private set filter(value: string) {
+    this._sort =
+      value === null || value === undefined || value === "" ? null : `${value}`;
+  }
 }
 
 export interface SearchableRepositoryInterface<
@@ -70,5 +106,5 @@ export interface SearchableRepositoryInterface<
   SearchInput,
   SearchOutput
 > extends RepositoryInterface<E> {
-  search(props): Promise<SearchOutput>;
+  search(props: SearchInput): Promise<SearchOutput>;
 }
