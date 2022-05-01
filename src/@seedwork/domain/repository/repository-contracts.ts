@@ -94,7 +94,7 @@ export class SearchParams {
   }
 
   private set filter(value: string) {
-    this._sort =
+    this._filter =
       value === null || value === undefined || value === "" ? null : `${value}`;
   }
 }
