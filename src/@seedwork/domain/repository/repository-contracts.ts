@@ -75,7 +75,7 @@ export class SearchParams {
       value === null || value === undefined || value === "" ? null : `${value}`;
   }
 
-  get sort_dir() {
+  get sort_dir(): SortDirection | null {
     return this._sort_dir;
   }
 
@@ -150,5 +150,6 @@ export interface SearchableRepositoryInterface<
   SearchInput = SearchParams,
   SearchOutput = SearchResult<E, Filter>
 > extends RepositoryInterface<E> {
+  sortableFields: string[];
   search(props: SearchInput): Promise<SearchOutput>;
 }
