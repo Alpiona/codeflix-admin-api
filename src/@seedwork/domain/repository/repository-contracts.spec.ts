@@ -1,4 +1,4 @@
-import { SearchParams } from "./repository-contracts";
+import { SearchParams, SearchResult } from "./repository-contracts";
 
 describe("SearchParams Unit Test", () => {
   test("page prop", () => {
@@ -131,5 +131,67 @@ describe("SearchParams Unit Test", () => {
         i.expected
       );
     });
+  });
+});
+
+describe("SearchResult Unit Test", () => {
+  test("constructor props", () => {
+    let resultParams = {
+      items: ["entity1", "entity2"] as any,
+      total: 4,
+      current_page: 1,
+      per_page: 2,
+      sort: null as string,
+      sort_dir: null as string,
+      filter: null as string,
+    };
+    let result = new SearchResult(resultParams);
+    expect(result.toJSON()).toStrictEqual({
+      ...resultParams,
+      last_page: 2,
+    });
+
+    resultParams = {
+      items: ["entity1", "entity2"] as any,
+      total: 4,
+      current_page: 1,
+      per_page: 2,
+      sort: "name",
+      sort_dir: "asc",
+      filter: "test",
+    };
+    result = new SearchResult(resultParams);
+    expect(result.toJSON()).toStrictEqual({
+      ...resultParams,
+      last_page: 2,
+    });
+  });
+
+  it("should set last_page 1 when per_page field is greater than total field", () => {
+    const resultParams = {
+      items: ["entity1", "entity2"] as any,
+      total: 4,
+      current_page: 1,
+      per_page: 15,
+      sort: "name",
+      sort_dir: "asc",
+      filter: "test",
+    };
+    const result = new SearchResult(resultParams);
+    expect(result.last_page).toBe(1);
+  });
+
+  it("should round up last_page when needed", () => {
+    const resultParams = {
+      items: ["entity1", "entity2"] as any,
+      total: 101,
+      current_page: 1,
+      per_page: 20,
+      sort: "name",
+      sort_dir: "asc",
+      filter: "test",
+    };
+    const result = new SearchResult(resultParams);
+    expect(result.last_page).toBe(6);
   });
 });
