@@ -24,7 +24,7 @@ export class SearchParams {
   protected _per_page: number = 15;
   protected _sort: string | null;
   protected _sort_dir: SortDirection | null;
-  protected _filter: string;
+  protected _filter: string | null;
 
   constructor(props: SearchProps = {}) {
     this.page = props.page;
