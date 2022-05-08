@@ -71,7 +71,7 @@ export abstract class InMemorySearchableRepository<E extends Entity>
 
     return new SearchResult({
       items: itemsPaginated,
-      total: itemsPaginated.length,
+      total: itemsFiltered.length,
       current_page: props.page,
       per_page: props.per_page,
       sort: props.sort,
