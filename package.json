@@ -1,38 +1,29 @@
 {
-  "name": "app",
-  "version": "1.0.0",
-  "description": "admin do catalogo de video",
+  "name": "micro-videos-typescript",
+  "version": "0.0.1",
+  "description": "",
   "main": "index.js",
-  "imports": {
-    "#seedwork/*": "./dist/@seedwork/*.js",
-    "#category/*": "./dist/category/*.js"
+  "dependencies": {
+    "create-ts-index": "^1.14.0",
+    "jest": "^27.5.1",
+    "uuid": "^8.3.2"
   },
+  "workspaces": [
+    "./src/@core",
+    "./src/nestjs"
+  ],
   "scripts": {
-    "ts-node": "ts-node",
-    "tsc": "tsc",
-    "tsc:check": "npm run tsc -- --noEmit",
-    "clean:tsc": "rm tsconfig.tsbuildinfo",
-    "test": "jest",
-    "test:cov": "npm run test -- --coverage",
-    "cti": "cti",
-    "cti:@core": "sh ./cti.sh"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alpiona/codeflix-admin-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@swc/core": "^1.2.165",
-    "@swc/jest": "^0.2.20",
-    "@types/jest": "^27.4.1",
-    "@types/lodash": "^4.14.182",
-    "@types/node": "14.14.31",
-    "@types/uuid": "^8.3.4",
-    "create-ts-index": "^1.14.0",
-    "jest": "^27.5.1",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.2"
+  "bugs": {
+    "url": "https://github.com/Alpiona/codeflix-admin-api/issues"
   },
-  "dependencies": {
-    "uuid": "^8.3.2"
-  }
+  "homepage": "https://github.com/Alpiona/codeflix-admin-api#readme"
 }
