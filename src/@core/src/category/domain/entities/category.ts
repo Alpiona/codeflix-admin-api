@@ -8,7 +8,7 @@ export type CategoryProperties = {
   created_at?: Date;
 };
 
-export default class Category extends Entity<CategoryProperties> {
+export class Category extends Entity<CategoryProperties> {
   constructor(public readonly props: CategoryProperties, id?: UniqueEntityId) {
     super(props, id);
     this.description = this.props.description;
@@ -61,3 +61,5 @@ export default class Category extends Entity<CategoryProperties> {
     this.props.created_at = value;
   }
 }
+
+export default Category;
