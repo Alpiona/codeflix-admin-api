@@ -13,7 +13,8 @@
     "./src/nestjs"
   ],
   "scripts": {
-    "start:dev": "npm run start:dev -w nestjs"
+    "prestart:dev": "npm run build -w core",
+    "start:dev": "npm run build:w -w core & npm run start:dev -w nestjs"
   },
   "repository": {
     "type": "git",
