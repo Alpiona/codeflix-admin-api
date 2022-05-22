@@ -1,6 +1,6 @@
+import { UniqueEntityId } from "#seedwork/domain";
+import { omit } from "lodash";
 import Category from "./category";
-import { create, omit } from "lodash";
-import UniqueEntityId from "../../../@seedwork/domain/value-objects/unique-entity-id.vo";
 
 describe("Category Tests", () => {
   test("Constructor of category", () => {
