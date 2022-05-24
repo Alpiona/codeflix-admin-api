@@ -23,28 +23,28 @@ export class CategoriesController {
 
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.createUseCase.execute(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    return await this.createUseCase.execute(createCategoryDto);
   }
 
   @Get()
-  search(@Query() searchParams: SearchCategoryDto) {
-    return this.listUseCase.execute(searchParams)
+  async search(@Query() searchParams: SearchCategoryDto) {
+    return await this.listUseCase.execute(searchParams)
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.getUseCase.execute({id});
+  async findOne(@Param('id') id: string) {
+    return await this.getUseCase.execute({id});
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.updateUseCase.execute({id, ...updateCategoryDto});
+  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return await this.updateUseCase.execute({id, ...updateCategoryDto});
   }
 
   @HttpCode(204)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.deleteUseCase.execute({id});
+  async remove(@Param('id') id: string) {
+    return await this.deleteUseCase.execute({id});
   }
 }
