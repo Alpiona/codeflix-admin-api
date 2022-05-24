@@ -3,7 +3,7 @@ import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import {CategoryInMemoryRepository} from 'core/category/infra'
 import CategoryRepository from 'core/dist/category/domain/repository/category.repository';
-import {CreateCategoryUseCase, GetCategoryUseCase, ListCategoriesUseCase, UpdateCategoryUseCase} from 'core/category/application'
+import {CreateCategoryUseCase, DeleteCategoryUseCase, GetCategoryUseCase, ListCategoriesUseCase, UpdateCategoryUseCase} from 'core/category/application'
 
 @Module({
   controllers: [CategoriesController],
@@ -19,6 +19,20 @@ import {CreateCategoryUseCase, GetCategoryUseCase, ListCategoriesUseCase, Update
       inject: ['CategoryRepository']
     },
     {
+      provide: DeleteCategoryUseCase.UseCase,
+      useFactory: (categoryRepo: CategoryRepository.Repository)=> {
+        return new DeleteCategoryUseCase.UseCase(categoryRepo)
+      },
+      inject: ['CategoryRepository']
+    },
+    {
+      provide: GetCategoryUseCase.UseCase,
+      useFactory: (categoryRepo: CategoryRepository.Repository)=> {
+        return new GetCategoryUseCase.UseCase(categoryRepo)
+      },
+      inject: ['CategoryRepository']
+    },
+    {
       provide: ListCategoriesUseCase.UseCase,
       useFactory: (categoryRepo: CategoryRepository.Repository)=> {
         return new ListCategoriesUseCase.UseCase(categoryRepo)
@@ -29,13 +43,6 @@ import {CreateCategoryUseCase, GetCategoryUseCase, ListCategoriesUseCase, Update
       provide: UpdateCategoryUseCase.UseCase,
       useFactory: (categoryRepo: CategoryRepository.Repository)=> {
         return new UpdateCategoryUseCase.UseCase(categoryRepo)
-      },
-      inject: ['CategoryRepository']
-    },
-    {
-      provide: GetCategoryUseCase.UseCase,
-      useFactory: (categoryRepo: CategoryRepository.Repository)=> {
-        return new GetCategoryUseCase.UseCase(categoryRepo)
       },
       inject: ['CategoryRepository']
     },
