@@ -1,13 +1,14 @@
 import { UniqueEntityId } from "#seedwork/domain";
 import { CategoryRepository, Category } from "#category/domain";
+import { CategoryModel } from './category-model';
 
-export class CategorySequelizeRepository extends CategoryRepository {
+export class CategorySequelizeRepository implements CategoryRepository.Repository {
   constructor(private categoryModel: typeof CategoryModel) {}
 
   async insert(entity: Category): Promise<void> {}
 
   async findById(id: string | UniqueEntityId): Promise<Category> {
-    return new Category({});
+    return new Category({name: 'teste'});
   }
 
   async findAll(): Promise<Category[]> {
@@ -21,6 +22,8 @@ export class CategorySequelizeRepository extends CategoryRepository {
   sortableFields: string[];
 
   async search(
-    props: CategoryRepository.SearchParms
-  ): Promise<CategoryRepository.SearchResult> {}
+    props: CategoryRepository.SearchParams
+  ): Promise<CategoryRepository.SearchResult> {
+    return 
+  }
 }

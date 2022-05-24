@@ -19,6 +19,8 @@ export default {
   "coverageDirectory": "../coverage",
   "testEnvironment": "node",
   moduleNameMapper: {
-    '@core/(.*)$': '<rootDir>/../../../node_modules/core/dist/$1'
+    '^core/(.*)$': '<rootDir>/../../../node_modules/core/dist/$1',
+    '#seedwork/(.*)$': '<rootDir>/../../../node_modules/core/dist/@seedwork/$1',   
+    '#category/(.*)$': '<rootDir>/../../../node_modules/core/dist/category/$1',
   }
 }
