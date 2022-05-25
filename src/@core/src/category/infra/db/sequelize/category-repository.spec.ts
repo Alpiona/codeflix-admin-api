@@ -1,6 +1,5 @@
 import { Category } from "#category/domain";
-import { UniqueEntityId } from "#seedwork/domain";
-import NotFoundError from "#seedwork/errors/not-found.error";
+import { NotFoundError, UniqueEntityId } from "#seedwork/domain";
 import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category-model";
 import { CategorySequelizeRepository } from "./category-repository";

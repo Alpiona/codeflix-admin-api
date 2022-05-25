@@ -1,4 +1,4 @@
-import ValidationError from "../errors/validation-error";
+import { ValidationError } from '#seedwork/domain';
 import { ValidatorRules } from "./validator-rules";
 
 type Value = {
