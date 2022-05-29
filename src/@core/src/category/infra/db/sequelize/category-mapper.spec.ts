@@ -35,9 +35,9 @@ describe("CategoryModelMapper Unit Tests", () => {
       expect(e).toBeInstanceOf(LoadEntityError);
       expect(e.error).toMatchObject({
         name: [
+          "name must be shorter than or equal to 255 characters",
           "name should not be empty",
           "name must be a string",
-          "name must be shorter than or equal to 255 characters",
         ],
       });
     }
