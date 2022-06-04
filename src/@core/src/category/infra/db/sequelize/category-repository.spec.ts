@@ -68,4 +68,17 @@ describe("CategorySequelizeRepository Unit Tests", () => {
     categoryFound = await repository.findById(category.uniqueEntityId);
     expect(category.toJSON()).toStrictEqual(categoryFound.toJSON());
   });
+
+  it("should return all categories", async () => {
+    const entity = new Category({ name: "Movie" });
+    await repository.insert(entity);
+    const entities = await repository.findAll();
+    expect(entities).toHaveLength(1);
+    expect(JSON.stringify(entities)).toBe(JSON.stringify([entity]));
+  });
+
+  it("search", async () => {
+    await CategoryModel.factory().create();
+    console.log(await CategoryModel.findAll());
+  });
 });
