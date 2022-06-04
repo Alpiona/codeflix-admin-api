@@ -2,7 +2,7 @@ import { NotFoundError, UniqueEntityId } from "#seedwork/domain";
 import { CategoryRepository, Category } from "#category/domain";
 import { CategoryModel } from "./category-model";
 import { CategoryModelMapper } from "./category-mapper";
-import { Op } from "sequelize/types";
+import { Op } from "sequelize";
 
 export class CategorySequelizeRepository
   implements CategoryRepository.Repository
@@ -31,7 +31,7 @@ export class CategorySequelizeRepository
   sortableFields: string[] = ["name", "created_at"];
 
   private async _get(id: string) {
-    return await this.categoryModel.findByPk(id, {
+    return this.categoryModel.findByPk(id, {
       rejectOnEmpty: new NotFoundError(`Category not found with ID ${id}`),
     });
   }
