@@ -1,9 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category-model";
 import { CategoryModelMapper } from "./category-mapper";
-import { LoadEntityError } from "#seedwork/domain";
-import { fail } from "assert";
-
+import { LoadEntityError, UniqueEntityId } from "#seedwork/domain";
+import { Category } from "#category/domain";
 describe("CategoryModelMapper Unit Tests", () => {
   let sequelize: Sequelize;
 
@@ -41,5 +40,42 @@ describe("CategoryModelMapper Unit Tests", () => {
         ],
       });
     }
+  });
+
+  it("should throw a generic error", () => {
+    const error = new Error("Generic Error");
+    const spyValidate = jest
+      .spyOn(Category, "validate")
+      .mockImplementation(() => {
+        throw error;
+      });
+    const model = CategoryModel.build({
+      id: "71047f08-3d5f-48eb-9f09-b8e23a5ca544",
+    });
+    expect(() => CategoryModelMapper.toEntity(model)).toThrow(error);
+    expect(spyValidate).toHaveBeenCalled();
+  });
+
+  it("should convert a category model to a category entity", () => {
+    const created_at = new Date();
+    const model = CategoryModel.build({
+      id: "71047f08-3d5f-48eb-9f09-b8e23a5ca544",
+      name: "some value",
+      description: "some description",
+      is_active: true,
+      created_at,
+    });
+    const entity = CategoryModelMapper.toEntity(model);
+    expect(entity.toJSON()).toStrictEqual(
+      new Category(
+        {
+          name: "some value",
+          description: "some description",
+          is_active: true,
+          created_at,
+        },
+        new UniqueEntityId("71047f08-3d5f-48eb-9f09-b8e23a5ca544")
+      ).toJSON()
+    );
   });
 });
