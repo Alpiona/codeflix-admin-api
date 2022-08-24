@@ -2,7 +2,6 @@ import {
   Entity,
   EntityValidationError,
   UniqueEntityId,
-  ValidatorRules,
 } from "#seedwork/domain";
 import CategoryValidatorFactory from "../validators/category.validator";
 

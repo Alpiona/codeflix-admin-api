@@ -1,17 +1,17 @@
 import { UniqueEntityId } from "#seedwork/domain";
 import { omit } from "lodash";
-import Category from "./category";
+import { Category, CategoryProperties } from "./category";
 
 describe("Category Tests", () => {
   beforeEach(() => {
-    Category.validate = jest.fn()
-  })
+    Category.validate = jest.fn();
+  });
   test("Constructor of category", () => {
     let category = new Category({ name: "Movie" });
 
     const props = omit(category.props, "created_at");
 
-    expect(Category.validate).toHaveBeenCalled()
+    expect(Category.validate).toHaveBeenCalled();
     expect(props).toStrictEqual({
       name: "Movie",
       description: null,
@@ -55,16 +55,18 @@ describe("Category Tests", () => {
     });
   });
 
-  test("id field", () => {
-    const data = [
+  describe("id field", () => {
+    type CategoryData = { props: CategoryProperties; id?: UniqueEntityId };
+
+    const arrange: CategoryData[] = [
       { props: { name: "Movie" } },
       { props: { name: "Movie" }, id: null },
       { props: { name: "Movie" }, id: undefined },
       { props: { name: "Movie" }, id: new UniqueEntityId() },
     ];
 
-    data.forEach((i) => {
-      const category = new Category(i.props, i.id);
+    test.each(arrange)("when props is %j", (item) => {
+      const category = new Category(item.props, item.id);
       expect(category.id).not.toBeNull();
       expect(category.uniqueEntityId).toBeInstanceOf(UniqueEntityId);
     });
@@ -115,7 +117,7 @@ describe("Category Tests", () => {
   test("should update a category", () => {
     const category = new Category({ name: "Movie" });
     category.update("Documentary", "some description");
-    expect(Category.validate).toHaveBeenCalledTimes(2)
+    expect(Category.validate).toHaveBeenCalledTimes(2);
     expect(category.name).toBe("Documentary");
     expect(category.description).toBe("some description");
   });
