@@ -82,9 +82,18 @@ export namespace CategorySequelize {
       return models.map((m) => CategoryModelMapper.toEntity(m));
     }
 
-    async update(entity: Category): Promise<void> {}
+    async update(entity: Category): Promise<void> {
+      await this._get(entity.id);
+      await this.categoryModel.update(entity.toJSON(), {
+        where: { id: entity.id },
+      });
+    }
 
-    async delete(id: string | UniqueEntityId): Promise<void> {}
+    async delete(id: string | UniqueEntityId): Promise<void> {
+      const _id = `${id}`;
+      await this._get(_id);
+      this.categoryModel.destroy({ where: { id: _id } });
+    }
 
     sortableFields: string[] = ["name", "created_at"];
 
