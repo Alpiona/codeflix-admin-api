@@ -1,9 +1,9 @@
-import { Category } from '#category/domain';
-import { CategoryInMemoryRepository } from '#category/infra';
-import { NotFoundError } from '#seedwork/domain';
-import { DeleteCategoryUseCase } from "../delete-category.use-case";
+import { Category } from "#category/domain";
+import { CategoryInMemoryRepository } from "#category/infra";
+import { NotFoundError } from "#seedwork/domain";
+import { DeleteCategoryUseCase } from "../../delete-category.use-case";
 
-describe("GetCategoryUseCase Unit Tests", () => {
+describe("DeleteCategoryUseCase Unit Tests", () => {
   let useCase: DeleteCategoryUseCase.UseCase;
   let repository: CategoryInMemoryRepository;
 
