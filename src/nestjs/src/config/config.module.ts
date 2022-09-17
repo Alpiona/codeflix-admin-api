@@ -17,8 +17,8 @@ type DB_SCHEMA_TYPE = {
   DB_AUTO_LOAD_MODELS: boolean;
 };
 
-const DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
-  DB_VENDOR: Joi.string().required().valid('mysqll', 'sqlite'),
+export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
+  DB_VENDOR: Joi.string().required().valid('mysql', 'sqlite'),
   DB_HOST: Joi.string().required(),
   DB_DATABASE: Joi.string().when('DB_VENDOR', {
     is: 'mysql',
@@ -32,7 +32,7 @@ const DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
     is: 'mysql',
     then: Joi.required(),
   }),
-  DB_PORT: Joi.number().when('DB_VENDOR', {
+  DB_PORT: Joi.number().integer().when('DB_VENDOR', {
     is: 'mysql',
     then: Joi.required(),
   }),
@@ -53,7 +53,7 @@ export class ConfigModule extends NestConfigModule {
         join(__dirname, `../envs/.env.${process.env.NODE_ENV}`),
         join(__dirname, '../envs/.env'),
       ],
-      validationSchema: Joi.object({ ...DB_SCHEMA }),
+      validationSchema: Joi.object({ ...CONFIG_DB_SCHEMA }),
       ...options,
     });
   }
