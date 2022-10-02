@@ -1,7 +1,7 @@
 import { config as readEnv } from "dotenv";
 import { join } from "path";
 
-export type Config = {
+type Config = {
   db: {
     vendor: any;
     host: string;
