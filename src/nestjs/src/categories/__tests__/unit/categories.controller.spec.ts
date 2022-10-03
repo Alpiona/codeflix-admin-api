@@ -5,9 +5,9 @@ import {
   UpdateCategoryUseCase,
 } from 'core/category/application';
 import { SortDirection } from 'core/dist/@seedwork/domain/repository/repository-contracts';
-import { CategoriesController } from './categories.controller';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoriesController } from '../../categories.controller';
+import { CreateCategoryDto } from '../../dto/create-category.dto';
+import { UpdateCategoryDto } from '../../dto/update-category.dto';
 
 describe('CategoriesController', () => {
   let controller: CategoriesController;
