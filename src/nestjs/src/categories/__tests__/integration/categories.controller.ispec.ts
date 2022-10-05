@@ -45,24 +45,63 @@ describe('CategoriesController Integration Tests', () => {
     );
   });
 
-  it('should create a category', async () => {
-    const output = await controller.create({
-      name: 'Movie',
-    });
-    const entity = await repository.findById(output.id);
+  describe('should create a category', () => {
+    const arrange = [
+      {
+        request: {
+          name: 'Movie',
+        },
+        expectedOutput: {
+          name: 'Movie',
+          description: null,
+          is_active: true,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
+          description: null,
+        },
+        expectedOutput: {
+          name: 'Movie',
+          description: null,
+          is_active: true,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
+          description: null,
+          is_active: false,
+        },
+        expectedOutput: {
+          name: 'Movie',
+          description: null,
+          is_active: false,
+        },
+      },
+    ];
 
-    expect(entity).toMatchObject({
-      id: output.id,
-      name: 'Movie',
-      description: null,
-      is_active: true,
-      created_at: output.created_at,
-    });
+    test.each(arrange)(
+      'with request $request',
+      async ({ request, expectedOutput }) => {
+        const output = await controller.create(request);
+        const entity = await repository.findById(output.id);
 
-    expect(output.id).toBe(entity.id);
-    expect(output.name).toBe('Movie');
-    expect(output.description).toBeNull();
-    expect(output.is_active).toBeTruthy();
-    expect(output.created_at).toStrictEqual(entity.created_at);
+        expect(entity).toMatchObject({
+          id: output.id,
+          name: expectedOutput.name,
+          description: expectedOutput.description,
+          is_active: expectedOutput.is_active,
+          created_at: output.created_at,
+        });
+
+        expect(output.id).toBe(entity.id);
+        expect(output.name).toBe(expectedOutput.name);
+        expect(output.description).toBe(expectedOutput.description);
+        expect(output.is_active).toBe(expectedOutput.is_active);
+        expect(output.created_at).toStrictEqual(entity.created_at);
+      },
+    );
   });
 });
