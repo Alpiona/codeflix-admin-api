@@ -12,6 +12,7 @@ import { CategoriesController } from '../../../categories/categories.controller'
 import { CategoriesModule } from '../../../categories/categories.module';
 import { ConfigModule } from '../../../config/config.module';
 import { DatabaseModule } from '../../../database/database.module';
+import { CategorySequelize } from 'core/category/infra';
 
 describe('CategoriesController Integration Tests', () => {
   let controller: CategoriesController;
@@ -51,7 +52,7 @@ describe('CategoriesController Integration Tests', () => {
         request: {
           name: 'Movie',
         },
-        expectedOutput: {
+        expectedPresenter: {
           name: 'Movie',
           description: null,
           is_active: true,
@@ -62,7 +63,7 @@ describe('CategoriesController Integration Tests', () => {
           name: 'Movie',
           description: null,
         },
-        expectedOutput: {
+        expectedPresenter: {
           name: 'Movie',
           description: null,
           is_active: true,
@@ -74,7 +75,7 @@ describe('CategoriesController Integration Tests', () => {
           description: null,
           is_active: false,
         },
-        expectedOutput: {
+        expectedPresenter: {
           name: 'Movie',
           description: null,
           is_active: false,
@@ -84,23 +85,89 @@ describe('CategoriesController Integration Tests', () => {
 
     test.each(arrange)(
       'with request $request',
-      async ({ request, expectedOutput }) => {
-        const output = await controller.create(request);
-        const entity = await repository.findById(output.id);
+      async ({ request, expectedPresenter }) => {
+        const presenter = await controller.create(request);
+        const entity = await repository.findById(presenter.id);
 
         expect(entity).toMatchObject({
-          id: output.id,
-          name: expectedOutput.name,
-          description: expectedOutput.description,
-          is_active: expectedOutput.is_active,
-          created_at: output.created_at,
+          id: presenter.id,
+          name: expectedPresenter.name,
+          description: expectedPresenter.description,
+          is_active: expectedPresenter.is_active,
+          created_at: presenter.created_at,
         });
 
-        expect(output.id).toBe(entity.id);
-        expect(output.name).toBe(expectedOutput.name);
-        expect(output.description).toBe(expectedOutput.description);
-        expect(output.is_active).toBe(expectedOutput.is_active);
-        expect(output.created_at).toStrictEqual(entity.created_at);
+        expect(presenter.id).toBe(entity.id);
+        expect(presenter.name).toBe(expectedPresenter.name);
+        expect(presenter.description).toBe(expectedPresenter.description);
+        expect(presenter.is_active).toBe(expectedPresenter.is_active);
+        expect(presenter.created_at).toStrictEqual(entity.created_at);
+      },
+    );
+  });
+
+  describe('should update a category', () => {
+    let category;
+
+    beforeEach(async () => {
+      category = await CategorySequelize.CategoryModel.factory().create();
+    });
+
+    const arrange = [
+      {
+        request: {
+          name: 'Movie',
+        },
+        expectedPresenter: {
+          name: 'Movie',
+          description: null,
+          is_active: true,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
+          description: null,
+        },
+        expectedPresenter: {
+          name: 'Movie',
+          description: null,
+          is_active: true,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
+          description: null,
+          is_active: false,
+        },
+        expectedPresenter: {
+          name: 'Movie',
+          description: null,
+          is_active: false,
+        },
+      },
+    ];
+
+    test.each(arrange)(
+      'with request $request',
+      async ({ request, expectedPresenter }) => {
+        const presenter = await controller.update(category.id, request);
+        const entity = await repository.findById(presenter.id);
+
+        expect(entity).toMatchObject({
+          id: presenter.id,
+          name: expectedPresenter.name,
+          description: expectedPresenter.description,
+          is_active: expectedPresenter.is_active,
+          created_at: presenter.created_at,
+        });
+
+        expect(presenter.id).toBe(entity.id);
+        expect(presenter.name).toBe(expectedPresenter.name);
+        expect(presenter.description).toBe(expectedPresenter.description);
+        expect(presenter.is_active).toBe(expectedPresenter.is_active);
+        expect(presenter.created_at).toStrictEqual(entity.created_at);
       },
     );
   });
