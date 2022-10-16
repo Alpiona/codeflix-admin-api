@@ -13,6 +13,7 @@ import { CategoriesModule } from '../../../categories/categories.module';
 import { ConfigModule } from '../../../config/config.module';
 import { DatabaseModule } from '../../../database/database.module';
 import { CategorySequelize } from 'core/category/infra';
+import { NotFoundError } from 'core/@seedwork/domain';
 
 describe('CategoriesController Integration Tests', () => {
   let controller: CategoriesController;
@@ -170,5 +171,24 @@ describe('CategoriesController Integration Tests', () => {
         expect(presenter.created_at).toStrictEqual(entity.created_at);
       },
     );
+  });
+
+  it('should delete a category', async () => {
+    const category = await CategorySequelize.CategoryModel.factory().create();
+    const response = await controller.remove(category.id);
+    expect(response).not.toBeDefined();
+    await expect(repository.findById(category.id)).rejects.toThrow(
+      new NotFoundError(`Entity Not Found using ID ${category.id}`),
+    );
+  });
+
+  it('should get a category', async () => {
+    const category = await CategorySequelize.CategoryModel.factory().create();
+    const presenter = await controller.findOne(category.id);
+    expect(presenter.id).toBe(category.id);
+    expect(presenter.name).toBe(category.name);
+    expect(presenter.description).toBe(category.description);
+    expect(presenter.is_active).toBe(category.is_active);
+    expect(presenter.created_at).toStrictEqual(category.created_at);
   });
 });

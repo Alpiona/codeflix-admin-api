@@ -52,7 +52,8 @@ export class CategoriesController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.getUseCase.execute({ id });
+    const output = await this.getUseCase.execute({ id });
+    return new CategoryPresenter(output);
   }
 
   @Put(':id')
@@ -60,7 +61,11 @@ export class CategoriesController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.updateUseCase.execute({ id, ...updateCategoryDto });
+    const output = await this.updateUseCase.execute({
+      id,
+      ...updateCategoryDto,
+    });
+    return new CategoryPresenter(output);
   }
 
   @HttpCode(204)
