@@ -1,6 +1,6 @@
 import { UniqueEntityId } from "#seedwork/domain";
 import { omit } from "lodash";
-import { Category, CategoryProperties } from "./category";
+import { Category, CategoryProperties } from "../category";
 
 describe("Category Tests", () => {
   beforeEach(() => {
