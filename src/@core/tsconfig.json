@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {                           
-    "baseUrl": "./src",                                
+  "compilerOptions": {
+    "baseUrl": "./src",
     "paths": {
       "#seedwork/*": [
         "./@seedwork/*"
@@ -10,7 +10,9 @@
         "./category/*"
       ]
     },
-    "outDir": "./dist"
+    "outDir": "./dist",
   },
-  "include": ["./src/"]
+  "include": [
+    "src/"
+  ]
 }
