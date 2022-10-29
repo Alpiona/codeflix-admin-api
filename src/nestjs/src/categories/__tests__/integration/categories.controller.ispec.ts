@@ -6,14 +6,14 @@ import {
   ListCategoriesUseCase,
   UpdateCategoryUseCase,
 } from 'core/category/application';
-import { CategoryRepository } from 'core/category/domain';
+import { Category, CategoryRepository } from 'core/category/domain';
 import { CATEGORY_PROVIDERS } from '../../../categories/category.providers';
 import { CategoriesController } from '../../../categories/categories.controller';
 import { CategoriesModule } from '../../../categories/categories.module';
 import { ConfigModule } from '../../../config/config.module';
 import { DatabaseModule } from '../../../database/database.module';
-import { CategorySequelize } from 'core/category/infra';
-import { NotFoundError } from 'core/@seedwork/domain';
+import { NotFoundError, SortDirection } from 'core/@seedwork/domain';
+import { CategoryCollectionPresenter } from 'src/categories/presenter/category.presenter';
 
 describe('CategoriesController Integration Tests', () => {
   let controller: CategoriesController;
@@ -35,15 +35,15 @@ describe('CategoriesController Integration Tests', () => {
     expect(controller['createUseCase']).toBeInstanceOf(
       CreateCategoryUseCase.UseCase,
     );
-    expect(controller['deleteUseCase']).toBeInstanceOf(
-      DeleteCategoryUseCase.UseCase,
+    expect(controller['updateUseCase']).toBeInstanceOf(
+      UpdateCategoryUseCase.UseCase,
     );
     expect(controller['listUseCase']).toBeInstanceOf(
       ListCategoriesUseCase.UseCase,
     );
     expect(controller['getUseCase']).toBeInstanceOf(GetCategoryUseCase.UseCase);
-    expect(controller['updateUseCase']).toBeInstanceOf(
-      UpdateCategoryUseCase.UseCase,
+    expect(controller['deleteUseCase']).toBeInstanceOf(
+      DeleteCategoryUseCase.UseCase,
     );
   });
 
@@ -73,13 +73,12 @@ describe('CategoriesController Integration Tests', () => {
       {
         request: {
           name: 'Movie',
-          description: null,
-          is_active: false,
+          is_active: true,
         },
         expectedPresenter: {
           name: 'Movie',
           description: null,
-          is_active: false,
+          is_active: true,
         },
       },
     ];
@@ -108,12 +107,10 @@ describe('CategoriesController Integration Tests', () => {
   });
 
   describe('should update a category', () => {
-    let category;
-
+    const category = Category.fake().aCategory().build();
     beforeEach(async () => {
-      category = await CategorySequelize.CategoryModel.factory().create();
+      await repository.insert(category);
     });
-
     const arrange = [
       {
         request: {
@@ -139,13 +136,34 @@ describe('CategoriesController Integration Tests', () => {
       {
         request: {
           name: 'Movie',
+          is_active: true,
+        },
+        expectedPresenter: {
+          name: 'Movie',
           description: null,
+          is_active: true,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
           is_active: false,
         },
         expectedPresenter: {
           name: 'Movie',
           description: null,
           is_active: false,
+        },
+      },
+      {
+        request: {
+          name: 'Movie',
+          description: 'description test',
+        },
+        expectedPresenter: {
+          name: 'Movie',
+          description: 'description test',
+          is_active: true,
         },
       },
     ];
@@ -174,7 +192,8 @@ describe('CategoriesController Integration Tests', () => {
   });
 
   it('should delete a category', async () => {
-    const category = await CategorySequelize.CategoryModel.factory().create();
+    const category = Category.fake().aCategory().build();
+    await repository.insert(category);
     const response = await controller.remove(category.id);
     expect(response).not.toBeDefined();
     await expect(repository.findById(category.id)).rejects.toThrow(
@@ -183,12 +202,159 @@ describe('CategoriesController Integration Tests', () => {
   });
 
   it('should get a category', async () => {
-    const category = await CategorySequelize.CategoryModel.factory().create();
+    const category = Category.fake().aCategory().build();
+    await repository.insert(category);
     const presenter = await controller.findOne(category.id);
+
     expect(presenter.id).toBe(category.id);
     expect(presenter.name).toBe(category.name);
     expect(presenter.description).toBe(category.description);
     expect(presenter.is_active).toBe(category.is_active);
     expect(presenter.created_at).toStrictEqual(category.created_at);
+  });
+
+  describe('search method', () => {
+    it('should returns categories using query empty ordered by created_at', async () => {
+      const categories = Category.fake()
+        .theCategories(4)
+        .withName((index) => index + '')
+        .withCreatedAt((index) => new Date(new Date().getTime() + index))
+        .build();
+      await repository.bulkInsert(categories);
+
+      const arrange = [
+        {
+          send_data: {},
+          expected: {
+            items: [categories[3], categories[2], categories[1], categories[0]],
+            current_page: 1,
+            last_page: 1,
+            per_page: 15,
+            total: 4,
+          },
+        },
+        {
+          send_data: { per_page: 2 },
+          expected: {
+            items: [categories[3], categories[2]],
+            current_page: 1,
+            last_page: 2,
+            per_page: 2,
+            total: 4,
+          },
+        },
+        {
+          send_data: { page: 2, per_page: 2 },
+          expected: {
+            items: [categories[1], categories[0]],
+            current_page: 2,
+            last_page: 2,
+            per_page: 2,
+            total: 4,
+          },
+        },
+      ];
+
+      for (const item of arrange) {
+        const presenter = await controller.search(item.send_data);
+        expect(presenter).toEqual(
+          new CategoryCollectionPresenter(item.expected),
+        );
+      }
+    });
+
+    it('should returns output using pagination, sort and filter', async () => {
+      const faker = Category.fake().aCategory();
+      const categories = [
+        faker.withName('a').build(),
+        faker.withName('AAA').build(),
+        faker.withName('AaA').build(),
+        faker.withName('b').build(),
+        faker.withName('c').build(),
+      ];
+      await repository.bulkInsert(categories);
+
+      const arrange_asc = [
+        {
+          send_data: {
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+            filter: 'a',
+          },
+          expected: {
+            items: [categories[1], categories[2]],
+            current_page: 1,
+            last_page: 2,
+            per_page: 2,
+            total: 3,
+          },
+        },
+        {
+          send_data: {
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+            filter: 'a',
+          },
+          expected: {
+            items: [categories[0]],
+            current_page: 2,
+            last_page: 2,
+            per_page: 2,
+            total: 3,
+          },
+        },
+      ];
+
+      for (const item of arrange_asc) {
+        const presenter = await controller.search(item.send_data);
+        expect(presenter).toEqual(
+          new CategoryCollectionPresenter(item.expected),
+        );
+      }
+
+      const arrange_desc = [
+        {
+          send_data: {
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+            sort_dir: 'desc' as SortDirection,
+            filter: 'a',
+          },
+          expected: {
+            items: [categories[0], categories[2]],
+            current_page: 1,
+            last_page: 2,
+            per_page: 2,
+            total: 3,
+          },
+        },
+        {
+          send_data: {
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+            sort_dir: 'desc' as SortDirection,
+            filter: 'a',
+          },
+          expected: {
+            items: [categories[1]],
+            current_page: 2,
+            last_page: 2,
+            per_page: 2,
+            total: 3,
+          },
+        },
+      ];
+
+      for (const item of arrange_desc) {
+        const presenter = await controller.search(item.send_data);
+        expect(presenter).toEqual(
+          new CategoryCollectionPresenter(item.expected),
+        );
+      }
+    });
   });
 });

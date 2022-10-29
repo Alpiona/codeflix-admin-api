@@ -1,4 +1,7 @@
-import { CategoryInMemoryRepository, CategorySequelize } from 'core/category/infra';
+import {
+  CategoryInMemoryRepository,
+  CategorySequelize,
+} from 'core/category/infra';
 import { CategoryRepository } from 'core/category/domain';
 import {
   CreateCategoryUseCase,
@@ -19,9 +22,9 @@ export namespace CATEGORY_PROVIDERS {
     export const CATEGORY_SEQUELIZE_REPOSITORY = {
       provide: 'CategorySequelizeRepository',
       useFactory: (categoryModel: typeof CategorySequelize.CategoryModel) => {
-        return new CategorySequelize.CategorySequelizeRepository(categoryModel)
+        return new CategorySequelize.CategorySequelizeRepository(categoryModel);
       },
-      inject: [getModelToken(CategorySequelize.CategoryModel)]
+      inject: [getModelToken(CategorySequelize.CategoryModel)],
     };
 
     export const CATEGORY_REPOSITORY = {
